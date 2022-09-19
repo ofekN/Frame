@@ -16,9 +16,9 @@ import Frame from 'https://cdn.jsdelivr.net/gh/ofekN/Frame/frame.js'
 ### run and runFrom
 ```javascript
 
-Motion.run(_box,{duration:2,rotateX:50,top:'50px',background:'rgb(155,225,55)',repeat:1})
+Frame.run(_box,{duration:2,rotateX:50,top:'50px',background:'rgb(155,225,55)',repeat:1})
 
-Motion.runFrom(_box,{rotate:-50},{x:'100%',fontWeight:900,duration:2,repeat:2,onEnd:()=>{console.log('eneded')}})
+Frame.runFrom(_box,{rotate:-50},{x:'100%',fontWeight:900,duration:2,repeat:2,onEnd:()=>{console.log('eneded')}})
 
 ```
 
