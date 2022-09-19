@@ -314,7 +314,7 @@ const transformValues = (start,endVal,betweenNum,easeNum,easing) =>
     constructor()
     {
         //*  Motion Hello World   */
-        console.log(`%c Frame ${Version} 🙈🙉🙊 git - `, ' background: #040505;text-shadow: 2px 1px #ff0000; color: #fafafa; font-size:1.2em; padding:7.5px;')
+        console.log(`%c Frame ${Version} 🙈🙉🙊 https://github.com/ofekN/Frame`, ' background: #040505;text-shadow: 2px 1px #ff0000; color: #fafafa; font-size:1.2em; padding:7.5px;')
         //*  Motion Hello World   */
        
         this.easing =BezierEasing(0, 0, 0.5, 1);
@@ -414,6 +414,16 @@ const transformValues = (start,endVal,betweenNum,easeNum,easing) =>
                 sequences.push({object:elm,opt:options,opt1:options1,startDuration:start})
 
                 setMaxDuration()
+             },
+             restart:()=>{
+                let index = this._sequences.indexOf(sequenceObject)
+                 
+                this._sequences[index].time = -.9
+                this._sequences[index].sequences.forEach(s=>{
+                    s.startValue = 0
+                    s.easeNumber = 0
+                })
+
              }
          }
 
