@@ -183,13 +183,13 @@ export function checkEase(ease)
       case 'expo-inOut':
          return [0.87, 0, 0.13, 1];
         break;  
-      case 'motion-in':
+      case 'frame-in':
          return [1,.99,.96,.78];
         break;  
-      case 'motion-out':
+      case 'frame-out':
          return [1,.99,.71,.92];
         break;  
-      case 'motion-inOut':
+      case 'frame-inOut':
          return [1,1,.86,.49];
         break;  
     }

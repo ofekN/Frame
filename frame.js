@@ -3,8 +3,8 @@ import { checkEase } from './utilities/bezierEasing.js'
 const Version = '1.0'
 
 
-const supportTransforms = ['x','y','z','rotate','rotateX','rotateY','rotateZ']
-const supportCss = ['top','left','right','bottom','marginRight','marginLeft','marginTop','marginBottom','paddingRight','paddingLeft','paddingTop','paddingBottom','borderRadius','fontSize','fontWeight','lineHeight','letterSpacing','opacity']
+const supportTransforms = ['x','y','z','rotate','rotateX','rotateY','rotateZ','scale']
+const supportCss = ['width','height','top','left','right','bottom','marginRight','marginLeft','marginTop','marginBottom','paddingRight','paddingLeft','paddingTop','paddingBottom','borderRadius','fontSize','fontWeight','lineHeight','letterSpacing','opacity']
 const settings = ['isObj','duration','repeat','onRun','onEnd','onStart','object','repeated','pong','ease']
 
 const hexToRgb = (hex) => {
@@ -51,7 +51,8 @@ const _getTransform = (element)=> {
         x=0,
         y=0,
         z=0,
-        angle=0
+        angle=0,
+        scale=0
 
     if (matrix !== 'none') {
         const matrixType = matrix.includes('3d') ? '3d' : '2d'
@@ -69,11 +70,12 @@ const _getTransform = (element)=> {
             const b = values[1];
             var radians = Math.atan2(b, a);
             var angle = Math.round( radians * (180/Math.PI));
-            
+            var scale = Math.sqrt(a*a + b*b);
              final = {
                 x:x,
                 y:y,
                 rotate:angle,
+                scale:scale,
                 type:'2d'
             }
 
@@ -97,6 +99,7 @@ const _getTransform = (element)=> {
                 a = Math.round(Math.asin(-matrixVal10 / cosB) * 180 / pi),
                 matrixVal1 = parseFloat(values[0]),
                 c = Math.round(Math.acos(matrixVal1 / cosB) * 180 / pi);
+                var scale = Math.sqrt(values[0]*values[0] + values[1]*values[1]);
 
             rotateX = a;
             rotateY = b;
@@ -109,6 +112,7 @@ const _getTransform = (element)=> {
                 rotateX:rotateX,
                 rotateY:rotateY,
                 rotateZ:rotateZ,
+                scale:scale,
                 type:'3d'
 
             }
@@ -470,16 +474,20 @@ const transformValues = (start,endVal,betweenNum,easeNum,easing) =>
     {
         if(a.isObj === false)
         {
-            let x=0,y=0,z=0,rotate=0,rotateX=0,rotateY=0
+            let x=0,y=0,z=0,rotate=0,rotateX=0,rotateY=0,_scale=1
             if('y' in a) y = a['y'].calculatedValue + (a['y'].semantic || 'px')
             if('x' in a) x = a['x'].calculatedValue + (a['x'].semantic || 'px')
             if('z' in a) x = a['z'].calculatedValue + (a['z'].semantic || 'px')
+            if('scale' in a) _scale = a['scale'].calculatedValue[0]
             if('rotate' in a) rotate = a['rotate'].calculatedValue
             if('rotateX' in a) rotateX = a['rotateX'].calculatedValue
             if('rotateY' in a) rotateY = a['rotateY'].calculatedValue
 
+            
+
             a.object.style.transform = 
             `
+            scale(${_scale})
             translateX(${x})
             translateY(${y})
             translateZ(${z})
