@@ -317,9 +317,9 @@ const transformValues = (start,endVal,betweenNum,easeNum,easing) =>
  class _Frame {
     constructor()
     {
-        //*  Motion Hello World   */
+        //*  Frame Hello World   */
         console.log(`%c Frame ${Version} 🙈🙉🙊 https://github.com/ofekN/Frame`, ' background: #040505;text-shadow: 2px 1px #ff0000; color: #fafafa; font-size:1.2em; padding:7.5px;')
-        //*  Motion Hello World   */
+        //*  Frame Hello World   */
        
         this.easing =BezierEasing(0, 0, 0.5, 1);
 
