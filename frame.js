@@ -3,7 +3,7 @@ import { checkEase } from './utilities/bezierEasing.js'
 const Version = '1.0'
 
 
-const supportTransforms = ['x','y','z','rotate','rotateX','rotateY','rotateZ','scale']
+const supportTransforms = ['x','y','z','rotate','rotateX','rotateY','rotateZ','scale','skewX','skewY','scaleX','scaleY']
 const supportCss = ['width','height','top','left','right','bottom','marginRight','marginLeft','marginTop','marginBottom','paddingRight','paddingLeft','paddingTop','paddingBottom','borderRadius','fontSize','fontWeight','lineHeight','letterSpacing','opacity']
 const settings = ['isObj','duration','repeat','onRun','onEnd','onStart','object','repeated','pong','ease']
 
@@ -52,7 +52,9 @@ const _getTransform = (element)=> {
         y=0,
         z=0,
         angle=0,
-        scale=0
+        scale=0,
+        skewX = 0,
+        skewY = 0
 
     if (matrix !== 'none') {
         const matrixType = matrix.includes('3d') ? '3d' : '2d'
@@ -63,6 +65,7 @@ const _getTransform = (element)=> {
         if (matrixType === '2d') {
             x = matrixValues[4]
             y = matrixValues[5]
+            
             var values = matrix.split('(')[1];
             values = values.split(')')[0];
             values = values.split(',');
@@ -71,13 +74,20 @@ const _getTransform = (element)=> {
             var radians = Math.atan2(b, a);
             var angle = Math.round( radians * (180/Math.PI));
             var scale = Math.sqrt(a*a + b*b);
+            var skewY = parseFloat((values[1] / Math.PI * 180).toFixed(1));
+            var skewX = parseFloat((values[2] / Math.PI * 180).toFixed(1));
              final = {
                 x:x,
                 y:y,
                 rotate:angle,
                 scale:scale,
+                scaleY:Math.sqrt(b*b),
+                scaleX:Math.sqrt(a*a),
+                skewX:skewX || 0,
+                skewY:skewY || 0,
                 type:'2d'
             }
+            console.log(final)
 
 
 
@@ -91,6 +101,7 @@ const _getTransform = (element)=> {
         
 
             var values = matrix.split('(')[1].split(')')[0].split(','),
+            
                 pi = Math.PI,
                 sinB = parseFloat(values[8]),
                 b = Math.round(Math.asin(sinB) * 180 / pi),
@@ -100,7 +111,8 @@ const _getTransform = (element)=> {
                 matrixVal1 = parseFloat(values[0]),
                 c = Math.round(Math.acos(matrixVal1 / cosB) * 180 / pi);
                 var scale = Math.sqrt(values[0]*values[0] + values[1]*values[1]);
-
+                var skewY = parseFloat((values[1] / Math.PI * 180).toFixed(1));
+                var skewX = parseFloat((values[2] / Math.PI * 180).toFixed(1));
             rotateX = a;
             rotateY = b;
             rotateZ = c;
@@ -112,10 +124,16 @@ const _getTransform = (element)=> {
                 rotateX:rotateX,
                 rotateY:rotateY,
                 rotateZ:rotateZ,
+                skewX:skewX || 0,
+                skewY:skewY || 0,
                 scale:scale,
+                scaleY:Math.sqrt(values[1]*values[1]),
+                scaleX:Math.sqrt(values[0]*values[0]),
                 type:'3d'
 
             }
+            console.log(final)
+
 
         }
 
@@ -317,9 +335,9 @@ const transformValues = (start,endVal,betweenNum,easeNum,easing) =>
  class _Frame {
     constructor()
     {
-        //*  Frame Hello World   */
+        //* Frame  Hello World   */
         console.log(`%c Frame ${Version} 🙈🙉🙊 https://github.com/ofekN/Frame`, ' background: #040505;text-shadow: 2px 1px #ff0000; color: #fafafa; font-size:1.2em; padding:7.5px;')
-        //*  Frame Hello World   */
+        //* Frame  Hello World   */
        
         this.easing =BezierEasing(0, 0, 0.5, 1);
 
@@ -474,7 +492,8 @@ const transformValues = (start,endVal,betweenNum,easeNum,easing) =>
     {
         if(a.isObj === false)
         {
-            let x=0,y=0,z=0,rotate=0,rotateX=0,rotateY=0,_scale=1
+            let vals = _getTransform(a.object)
+            let x=0,y=0,z=0,rotate=vals.rotate || 0,rotateX= vals.rotateX || 0,rotateY=vals.rotateY || 0,_scale=vals.scale || 1,_scaleX=vals.scaleX || 1,_scaleY=vals.scaleY || 1,_skewX=vals.skewX || 0,_skewY= vals.skewY || 0
             if('y' in a) y = a['y'].calculatedValue + (a['y'].semantic || 'px')
             if('x' in a) x = a['x'].calculatedValue + (a['x'].semantic || 'px')
             if('z' in a) x = a['z'].calculatedValue + (a['z'].semantic || 'px')
@@ -482,19 +501,26 @@ const transformValues = (start,endVal,betweenNum,easeNum,easing) =>
             if('rotate' in a) rotate = a['rotate'].calculatedValue
             if('rotateX' in a) rotateX = a['rotateX'].calculatedValue
             if('rotateY' in a) rotateY = a['rotateY'].calculatedValue
+            if('scaleX' in a) _scaleX = a['scaleX'].calculatedValue[0]
+            if('scaleY' in a) _scaleY = a['scaleY'].calculatedValue[0]
+            if('skewX' in a) _skewX = a['skewX'].calculatedValue[0]
+            if('skewY' in a) _skewY = a['skewY'].calculatedValue[0]
 
             
 
-            a.object.style.transform = 
-            `
-            scale(${_scale})
-            translateX(${x})
-            translateY(${y})
-            translateZ(${z})
-            rotate(${rotate}deg)
-            rotateX(${rotateX}deg)
-            rotateY(${rotateY}deg)
-            `
+                a.object.style.transform = 
+                `
+                scale(${_scale})
+                skewX(${_skewX}deg)
+                skewY(${_skewY}deg)
+                translateX(${x})
+                translateY(${y})
+                translateZ(${z})
+                rotate(${rotate}deg)
+                rotateX(${rotateX}deg)
+                rotateY(${rotateY}deg)
+                `
+            
             for (const key in a) {
                 if (Object.hasOwnProperty.call(a, key)) {
                     if(supportCss.indexOf(key) > -1 && 'semantic' in  a[key]) a.object.style[key] = a[key].calculatedValue + a[key].semantic
