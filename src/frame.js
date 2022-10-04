@@ -87,7 +87,6 @@ const _getTransform = (element)=> {
                 skewY:skewY || 0,
                 type:'2d'
             }
-            console.log(final)
 
 
 
@@ -132,7 +131,6 @@ const _getTransform = (element)=> {
                 type:'3d'
 
             }
-            console.log(final)
 
 
         }
